@@ -4,7 +4,9 @@ const bodyParser = require('body-parser');
 
 const randomId = require('random-id');
 
-const Venta = require ('../models/Venta');
+const Sale = require ('../models/Sale');
+const Box = require ('../models/Box');
+const Invoice = require('../models/Invoice')
 
 //const port = 3000 || process.env.PORT;
 
@@ -14,11 +16,9 @@ app.use(bodyParser.urlencoded({ extended: false}));
 //parse aplication json()
 app.use(bodyParser.json());
 
-app.get('/venta', (req, res) =>{
+app.get('/sales', (req, res) =>{
   
-  let body = req.body;
-
-  Venta.findAll()
+  Sale.findAll()
     .then(results => {
       if (!results){
         return res.status(500).json({
@@ -28,55 +28,58 @@ app.get('/venta', (req, res) =>{
       }
       res.json({
         ok: true,
-        usuarios: results
+        Sales: results
       })
     })
 })
 
-app.post('/venta', (req, res) => {
+app.post('/sale', (req, res) => {
 
   let body = req.body;
 
-  let venta = Venta.build({
-    nFactura: randomId(30, 'aA0'),
-    product: body.product,
+  let sale = Sale.build({
+    idSale: randomId(30, 'aA0'),
+    month: body.month,
+    invoice: body.invoice,
     client: body.client,
+    product: body.product,
+    type: body.type,
     amount: body.amount,
-    subtotal: body.subtotal,
+    value: body.subtotal,
+    state: body.state,
     address: body.address,
-    date: new Date(),
-    state: body.state
+    dateCreated: new Date()
   })
 
-  venta.save()
-    .then( clientedB => { 
+  sale.save()
+    .then( saleDB => { 
       res.json({
         ok: true,
-        cliente: clientedB.dataValues
+        sale: saleDB.dataValues
       })
     })
     .catch( err => {
       res.status(400).json({
-        ok: false, err: 'no se pudo guardar'
+        ok: false, 
+        err: err.message      
       })
-    }
-  )
+    })
+
 })
 
-app.put('/venta', (req, res) => {
+app.put('/sale', (req, res) => {
 
-  Venta.update({state: 'facturado'}, {where: {state:'cancelado'}})
+  Sale.update({state: 'cancelado'}, {where: {state:'facturado'}})
     .then( result => {
       if (result[0] === 0 ){
         return res.json({
           ok:false,
-          message: 'error al realizar el registro',
-          result
+          message: 'no hay registros para realizar'
         })
       }
       return res.json({
         ok:true,
-        message: 'Registro de caja realizado con exito'
+        message: 'se registraron '+result[0]+' Sales'
       })
     })
 })

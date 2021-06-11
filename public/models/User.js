@@ -5,40 +5,36 @@ const sequelize = new Sequelize({
   storage: './database/bunkerdb.sqlite'
 });
 
-const Cliente = sequelize.define('clientes', {
-  id: {
-    type: DataTypes.STRING,
+const User = sequelize.define('users', {
+  idUser: {
+    type: DataTypes.TEXT,
     allowNull: false,
     primaryKey: true,
     unique: true
   },
   name: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
     unique: true
   },
+  role: {
+    type: DataTypes.TEXT,
+    defaultValue:'USER'
+  },
   phone: {
-    type: DataTypes.STRING
+    type: DataTypes.TEXT
   },
   address: {
-    type: DataTypes.STRING
+    type: DataTypes.TEXT
   },
   email: {
-    type: DataTypes.STRING
+    type: DataTypes.TEXT
   },
   dateCreated: {
     type: DataTypes.DATE,
     allowNull: false
-  },
-  role: {
-    type: DataTypes.STRING,
-    defaultValue:'USER'
-  },
-  state: {
-    type: DataTypes.STRING,
-    defaultValue: 'ACTIVE'
   }}, { timestamps: false}
 );
 
-Cliente.sync()
-module.exports = Cliente;
+User.sync()
+module.exports = User;

@@ -3,10 +3,8 @@ const app = express();
 const randomID = require('random-id');
 const bodyParser = require('body-parser');
 
-//require('../models/Cliente');
-const Cliente = require('../models/Cliente');
-
-//const port = 3000 || process.env.PORT;
+//require('../models/User');
+const User = require('../models/User');
 
 //parse aplication /x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false}));
@@ -25,7 +23,7 @@ app.get('/cliente', (req, res) => {
     })
   }
 
-  Cliente.findOne({ where: {name: name}})
+  User.findOne({ where: {name: name}})
     .then(results => {
       if (!results){
         return res.status(400).json({
@@ -58,7 +56,7 @@ app.post('/cliente', ( req, res ) => {
     })
   }
   
-  let cliente = Cliente.build({
+  let cliente = User.build({
     id: randomID(30, 'aA0'),
     name: body.name,
     phone: body.phone,
@@ -102,7 +100,7 @@ app.put('/cliente', (req, res) => {
     role: req.body.role
   }
 
-  Cliente.update( userUpdate, { where: { name: user}})
+  User.update( userUpdate, { where: { name: user}})
     .then( result => {
       if (result[0] === 0){
         return res.json({
@@ -130,7 +128,7 @@ app.delete('/cliente', (req, res) => {
     })
   }
 
-  Cliente.findOne({where:{id}})
+  User.findOne({where:{id}})
     .then( userDB => {
       if(!userDB){
         return res.json({
@@ -139,7 +137,7 @@ app.delete('/cliente', (req, res) => {
         })
       }
       let nombre = userDB.name
-      Cliente.update( {state: 'DISABLED'}, { where: { id }})
+      User.update( {state: 'DISABLED'}, { where: { id }})
         .then( result => {
           if (result[0] === 0){
             return res.json({
